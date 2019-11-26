@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import tree, ensemble
 import matplotlib.pyplot as plot
 import random
+from mpl_toolkits.mplot3d import Axes3D
 
 
 class Evaluation:
@@ -24,19 +25,40 @@ class Evaluation:
         print(tree1.score(self.X_test, self.y_test))
 
     def bagging(self):
-        n_estimators = 1
-        for i in range(20):
-            n_estimators += i
-            bagging1 = ensemble.BaggingClassifier(tree.DecisionTreeClassifier(), n_estimators=n_estimators).fit(self.X_train, self.y_train)
+        for i in range(40):
+            n_estimators = i + 1
+            bagging1 = ensemble.BaggingClassifier(tree.DecisionTreeClassifier(), n_estimators).fit(self.X_train, self.y_train)
             score = bagging1.score(self.X_test, self.y_test)
             self.bagging_score[n_estimators] = score
         self.drawChart(self.bagging_score, "Bagging")
 
     def forest(self):
-        pass
+        for i in range(10):
+            n_estimators = i + 1
+            for j in range(10):
+                max_features = j * 2 + 1
+                forest1 = ensemble.RandomForestClassifier(n_estimators, max_features=max_features).fit(self.X_train, self.y_train)
+                score = forest1.score(self.X_test, self.y_test)
+                self.forest_score.update({(n_estimators, max_features): score})
+
+        (xy, scores) = zip(*self.forest_score.items())
+        (x, y) = zip(*xy)
+        fig = plot.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.set_xlabel("N Estimators")
+        ax.set_ylabel("Max Features")
+        ax.set_zlabel("Scores")
+        ax.scatter(x, y, scores)
+        plot.title("Forest")
+        plot.show()
 
     def boost(self):
-        pass
+        for i in range(40):
+            n_estimators = i + 1
+            ada_boost = ensemble.AdaBoostClassifier(tree.DecisionTreeClassifier(), n_estimators).fit(self.X_train, self.y_train)
+            score = ada_boost.score(self.X_test, self.y_test)
+            self.boost_score[n_estimators] = score
+        self.drawChart(self.boost_score, "AdaBoost")
 
     def summary(self):
         pass
