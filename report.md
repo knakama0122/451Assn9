@@ -1,6 +1,6 @@
 # Lab 9 Report
 
-The following are graph showing the classification accuracy of the decision tree using scikit learn.
+The following are graphs showing the classification accuracy of the decision tree using scikit learn.
 
 <figure>
     <img src="bagging.png"
